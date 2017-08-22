@@ -30,7 +30,15 @@ class Browser: NSObject {
         return webView?.scrollView
     }
 
+
     fileprivate var webView: UIWebView?
+    fileprivate lazy var injectedJavascript: String = {
+        guard let js = Bundle.main.path(forResource: "ContextMenu", ofType: "js")
+            .flatMap({ try? String(contentsOfFile: $0) }) else { fatalError("ContextMenu.js missing from bundle") }
+
+
+        return js
+    }()
 
     /// The main document of the latest request, which might be set before we've actually
     /// started loading the document.
@@ -57,11 +65,9 @@ class Browser: NSObject {
         swipeLeftRecognizer.direction = .left
         let swipeRightRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(goBackByGesture))
         swipeRightRecognizer.direction = .right
-        let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(detectLongPressOnImage))
 
         webView.addGestureRecognizer(swipeLeftRecognizer)
         webView.addGestureRecognizer(swipeRightRecognizer)
-        webView.addGestureRecognizer(longPressRecognizer)
         view.addSubview(webView)
 
         webView.snp.makeConstraints { make in
@@ -100,11 +106,7 @@ class Browser: NSObject {
         goForward()
     }
 
-    func detectLongPressOnImage(sender: UILongPressGestureRecognizer) {
-        webView?.isUserInteractionEnabled = sender.state != .began
-        guard sender.state == .began else { return }
-
-        let touchPoint = sender.location(in: webView)
+    func detectLongPressOnImage(touchPoint: CGPoint) {
         let tagName = "document.elementFromPoint(\(touchPoint.x), \(touchPoint.y)).tagName"
         let src = "document.elementFromPoint(\(touchPoint.x), \(touchPoint.y)).src"
         let isImage = webView?.stringByEvaluatingJavaScript(from: tagName).map({ $0 == "IMG" }) ?? false
@@ -191,6 +193,7 @@ extension Browser: UIWebViewDelegate {
     }
 
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+        print(request.url?.absoluteString)
         guard delegate?.browser(self, shouldStartLoadWith: request) ?? true else { return false }
 
         // If the load isn't on the main frame, we don't need any other special handling.
@@ -223,6 +226,7 @@ extension Browser: UIWebViewDelegate {
             delegate?.browserDidFinishNavigation(self)
         }
 
+        webView.stringByEvaluatingJavaScript(from: injectedJavascript)
         updatePostLoad()
     }
 

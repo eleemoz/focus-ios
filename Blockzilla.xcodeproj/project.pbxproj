@@ -29,6 +29,7 @@
 		745DC5DD1F39221100661635 /* ActionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745DC5DC1F39221100661635 /* ActionViewController.swift */; };
 		745DC5E41F39221100661635 /* ShareExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 745DC5DA1F39221100661635 /* ShareExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A57245250F88CCA4993E55B2 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F4C4943B406FCA9B74B4E186 /* CoreText.framework */; };
+		B36DB6E21F4CE75600E8604C /* ContextMenu.js in Resources */ = {isa = PBXBuildFile; fileRef = B36DB6E11F4CE75600E8604C /* ContextMenu.js */; };
 		B37F83041F3B90CE00F242EB /* CacheManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F83021F3B90CE00F242EB /* CacheManager.swift */; };
 		B37F83051F3B90CE00F242EB /* PhotoManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B37F83031F3B90CE00F242EB /* PhotoManager.swift */; };
 		D00A44111EB8F80A00DB0218 /* Telemetry.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D00A44101EB8F80A00DB0218 /* Telemetry.framework */; };
@@ -274,6 +275,7 @@
 		80D9AA926EFBD788739486EB /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		885AD5B8AB73EB0DA9702536 /* BuddyBuildSDK.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BuddyBuildSDK.framework; sourceTree = "<group>"; };
 		AAB8E622E994545108473554 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		B36DB6E11F4CE75600E8604C /* ContextMenu.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; name = ContextMenu.js; path = Assets/ContextMenu.js; sourceTree = "<group>"; };
 		B37F83021F3B90CE00F242EB /* CacheManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheManager.swift; sourceTree = "<group>"; };
 		B37F83031F3B90CE00F242EB /* PhotoManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoManager.swift; sourceTree = "<group>"; };
 		BC16C41C8D4A74C79A493D42 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
@@ -702,6 +704,14 @@
 			path = OpenInFocus;
 			sourceTree = "<group>";
 		};
+		B36DB6E01F4CE74500E8604C /* Assets */ = {
+			isa = PBXGroup;
+			children = (
+				B36DB6E11F4CE75600E8604C /* ContextMenu.js */,
+			);
+			name = Assets;
+			sourceTree = "<group>";
+		};
 		D30179C41BCD78BF009AD388 /* SCSiriWaveformView */ = {
 			isa = PBXGroup;
 			children = (
@@ -828,6 +838,7 @@
 		E4BF2DD51BACE8CA00DA9D68 /* Blockzilla */ = {
 			isa = PBXGroup;
 			children = (
+				B36DB6E01F4CE74500E8604C /* Assets */,
 				D3E54FD41DEFB25B003E1AFF /* SearchPlugins */,
 				D30179C51BCD78E1009AD388 /* Blockzilla-Bridging-Header.h */,
 				D3DA778B1DC2C60E009C114E /* errorPage.html */,
@@ -1102,6 +1113,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3B3232E1BD16A0F00B0EEE4 /* licenses.html in Resources */,
+				B36DB6E21F4CE75600E8604C /* ContextMenu.js in Resources */,
 				E4BF2DDE1BACE8CA00DA9D68 /* Assets.xcassets in Resources */,
 				6616A36F1BD17EFA00C7E493 /* style.css in Resources */,
 				D3C047BD1DCBD8ED00402FFB /* SearchEngines.plist in Resources */,
