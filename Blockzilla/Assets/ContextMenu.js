@@ -148,6 +148,7 @@ addEventListener("touchstart", function (event) {
         for (var i = 0; i < objectKeys.length; i++) {
           url += (isFirstParameter ? "?" : "&");
           url += (objectKeys[i] + "=" + data[objectKeys[i]]);
+          isFirstParameter = false;
         }
 
         window.location = "focusmessage://" + url;

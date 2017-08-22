@@ -192,8 +192,10 @@ extension Browser: UIWebViewDelegate {
         updateBackForwardStates(webView)
     }
 
+
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        print(request.url?.absoluteString)
+        let foo = request.url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) }
+        foo?.queryItems?.forEach { print($0.value) }
         guard delegate?.browser(self, shouldStartLoadWith: request) ?? true else { return false }
 
         // If the load isn't on the main frame, we don't need any other special handling.
