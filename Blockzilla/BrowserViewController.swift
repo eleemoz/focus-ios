@@ -263,8 +263,19 @@ class BrowserViewController: UIViewController {
         })
     }
 
-    fileprivate func presentImageActionSheet(title: String, saveAction: @escaping () -> Void, copyAction: @escaping () -> Void) {
+    fileprivate func presentImageActionSheet(title: String, link: String?, saveAction: @escaping () -> Void, copyAction: @escaping () -> Void) {
         let alertController = UIAlertController(title: title.truncated(limit: 160, position: .middle), message: nil, preferredStyle: .actionSheet)
+
+        if let link = link {
+            alertController.addAction(UIAlertAction(title: UIConstants.strings.copyLink, style: .default) { _ in
+                UIPasteboard.general.string = link
+            })
+
+            alertController.addAction(UIAlertAction(title: UIConstants.strings.shareLink, style: .default) { _ in
+                let activityViewController = UIActivityViewController(activityItems: [link], applicationActivities: nil)
+                self.present(activityViewController, animated: true, completion: nil)
+            })
+        }
 
         alertController.addAction(UIAlertAction(title: UIConstants.strings.saveImage, style: .default) { _ in saveAction() })
         alertController.addAction(UIAlertAction(title: UIConstants.strings.copyImage, style: .default) { _ in copyAction() })
@@ -369,7 +380,9 @@ extension BrowserViewController: BrowserToolsetDelegate {
 }
 
 extension BrowserViewController: BrowserDelegate {
-    func browser(_ browser: Browser, didLongPressImage path: String) {
+    func browser(_ browser: Browser, didLongPressImage path: String?, link: String?) {
+        guard let path = path else { return }
+
         let downloadImage: (String) -> UIImage? = { path in
             guard let url = URL(string: path),
                 let data = (try? Data(contentsOf: url)),
@@ -394,7 +407,7 @@ extension BrowserViewController: BrowserDelegate {
             UIPasteboard.general.image = fetchImage(path)
         }
 
-        presentImageActionSheet(title: path, saveAction: saveAction, copyAction: copyAction)
+        presentImageActionSheet(title: path, link: link, saveAction: saveAction, copyAction: copyAction)
     }
 
     func browserDidStartNavigation(_ browser: Browser) {
@@ -615,5 +628,13 @@ extension BrowserViewController: PhotoManagerDelegate {
         let didSucceed = error == nil
 
         Telemetry.default.recordEvent(category: TelemetryEventCategory.action, method: TelemetryEventMethod.click, object: TelemetryEventObject.saveImage, value: nil, extras: ["didSucceed": didSucceed])
+
+        let accessDenied = UIAlertController(title: UIConstants.strings.photosPermissionTitle, message: UIConstants.strings.photosPermissionDescription, preferredStyle: UIAlertControllerStyle.alert)
+        accessDenied.addAction(UIAlertAction(title: UIConstants.strings.cancel, style: UIAlertActionStyle.default, handler: nil))
+        accessDenied.addAction(UIAlertAction(title: UIConstants.strings.openSettingsButtonTitle, style: UIAlertActionStyle.default ) { (action: UIAlertAction!) -> Void in
+            UIApplication.shared.openURL(URL(string: UIApplicationOpenSettingsURLString)!)
+        })
+
+        self.present(accessDenied, animated: true, completion: nil)
     }
 }

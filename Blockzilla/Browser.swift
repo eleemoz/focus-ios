@@ -13,7 +13,7 @@ protocol BrowserDelegate: class {
     func browser(_ browser: Browser, didUpdateCanGoForward canGoForward: Bool)
     func browser(_ browser: Browser, didUpdateEstimatedProgress estimatedProgress: Float)
     func browser(_ browser: Browser, didUpdateURL url: URL?)
-    func browser(_ browser: Browser, didLongPressImage path: String)
+    func browser(_ browser: Browser, didLongPressImage path: String?, link: String?)
     func browser(_ browser: Browser, shouldStartLoadWith request: URLRequest) -> Bool
     func browser(_ browser: Browser, scrollViewWillBeginDragging scrollView: UIScrollView)
     func browser(_ browser: Browser, scrollViewDidEndDragging scrollView: UIScrollView)
@@ -106,15 +106,22 @@ class Browser: NSObject {
         goForward()
     }
 
-    func detectLongPressOnImage(touchPoint: CGPoint) {
-        let tagName = "document.elementFromPoint(\(touchPoint.x), \(touchPoint.y)).tagName"
-        let src = "document.elementFromPoint(\(touchPoint.x), \(touchPoint.y)).src"
-        let isImage = webView?.stringByEvaluatingJavaScript(from: tagName).map({ $0 == "IMG" }) ?? false
+    func handleMessage(request: URLRequest) -> Bool {
+        guard request.url?.scheme == "focusmessage" else { return false }
+        let queryItems = request.url.flatMap({ URLComponents(url: $0, resolvingAgainstBaseURL: false) })?.queryItems ?? []
+        var parameters: (link: String?, image: String?) = (nil, nil)
 
-        guard isImage,
-            let path = webView?.stringByEvaluatingJavaScript(from: src) else { return }
+        for item in queryItems {
+            switch item.name {
+            case "link": parameters.link = item.value
+            case "image": parameters.image = item.value
+            default: continue
+            }
+        }
 
-        delegate?.browser(self, didLongPressImage: path)
+        delegate?.browser(self, didLongPressImage: parameters.image, link: parameters.link)
+
+        return true
     }
 
     func goBack() {
@@ -194,8 +201,7 @@ extension Browser: UIWebViewDelegate {
 
 
     func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        let foo = request.url.flatMap { URLComponents(url: $0, resolvingAgainstBaseURL: false) }
-        foo?.queryItems?.forEach { print($0.value) }
+        guard !handleMessage(request: request) else { return false }
         guard delegate?.browser(self, shouldStartLoadWith: request) ?? true else { return false }
 
         // If the load isn't on the main frame, we don't need any other special handling.
